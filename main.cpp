@@ -104,9 +104,25 @@ int main() {
     char x;
     cin >> str;
     int a=int(str.length());
+    if (str[0] == '-')
+    {
+        str.insert(0, "(");
+        a++;
+        int gy=2;
+        for (gy=2;true;gy++)
+        {
+            if (str[gy] == '+' || str[gy] == '-' || str[gy] == '*' || str[gy] == '/')
+            {
+                break;
+            }
+        }
+        str.insert(gy, ")");
+        a++;
+    }
     for (int i = 0; i < a; i++) {
         if (str[i] == '(' && str[i + 1] == '-') {
             str.insert(i+1, "0");
+            a++;
         }
     }
      while (!str.empty()) {
@@ -116,11 +132,36 @@ int main() {
              str[sign] == ')' || str[sign] == '=') {
              if (sign == 0 &&
                  (str[sign] == '-' || str[sign] == '(' || str[sign] == '+' || str[sign] == '*' || str[sign] == '/')) {
-                 Push(S, str[sign]);
+                 if (str[sign] == '+') {
+                     while (!StackSymEmpty(S) && S.sym[S.sym_top] != '(') {
+                         Pop(S, x);
+                     }
+                     Push(S, str[sign]);
+                 }
+                 if (str[sign] == '-') {
+                     while (!StackSymEmpty(S) && S.sym[S.sym_top] != '(') {
+                         Pop(S, x);
+                     }
+                     Push(S, str[sign]);
+                 }
+                 if (str[sign] == '*') {
+                     while (S.sym[S.sym_top] == '*' || S.sym[S.sym_top] == '/') {
+                         Pop(S, x);
+                     }
+                     Push(S, str[sign]);
+                 }
+                 if (str[sign] == '/') {
+                     while (S.sym[S.sym_top] == '*' || S.sym[S.sym_top] == '/') {
+                         Pop(S, x);
+                     }
+                     Push(S, str[sign]);
+                 }
+                 if (str[sign] == '(')
+                     Push(S, str[sign]);
                  str.erase(0, 1);
                  continue;
              }
-             if ((str[sign] == ')' && (str[sign - 1] >= '0' && str[sign] <= '9')) || str[sign] == '+' ||
+             if ((str[sign] == ')' && (str[sign - 1] >= '0' && str[sign - 1] <= '9')) || str[sign] == '+' ||
                  str[sign] == '-' || str[sign] == '*' || str[sign] == '/' || str[sign] == '=') {
                  if(flo==0) {
                      num = stoi(str, nullptr, 10);
